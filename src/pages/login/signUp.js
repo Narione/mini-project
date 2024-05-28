@@ -1,4 +1,103 @@
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+
 export default function Signup() {
+  const router = useRouter();
+
+
+  /* useState, handler */
+  const [userId, setUserId] = useState("");
+  const [userPw, setUserPw] = useState("");
+  const [userNm, setUserNm] = useState("");
+  const [region, setRegion] = useState("");
+  const [field, setField] = useState("");
+
+  const [isDuple, setIsDuple] = useState(false);
+
+  const idOnChangeHandler = useCallback((e)=>{
+    setUserId(e.target.value);
+  },[])
+  const pwOnChangeHandler = useCallback((e)=>{
+    setUserPw(e.target.value);
+  },[])
+  const nmOnChangeHandler = useCallback((e)=>{
+    setUserNm(e.target.value);
+  },[])
+  const rgOnChangeHandler = useCallback((e)=>{
+    setRegion(e.target.value);
+  },[])
+  const fdOnChangeHandler = useCallback((e)=>{
+    setField(e.target.value);
+  },[])
+
+  
+  /* 아이디 중복 확인 */
+  useEffect(()=>{
+    setIsDuple(false);
+  },[userId])
+
+  const duple = async () => {
+    const res = await axios.post("/api/dbConnection", {
+      url: "duple",
+    });
+    const idArray = res.data
+    // console.log(res.data);
+    for (const item of idArray){
+      if(item.user_id == userId){
+        alert("중복하는 아이디가 존재합니다.")
+        setIsDuple(false);
+        return;
+      }
+    }
+    alert("사용할 수 있는 아이디입니다.")
+    setIsDuple(true);
+  };
+
+  /* 제출하기 */
+  const goRegister = async() => {
+    if(isDuple){
+      if(userId == ""){
+        alert("id를 입력해 주세요")
+        return;
+      }
+      if(userPw == ""){
+        alert("비밀번호를 입력해 주세요")
+        return;
+      }
+      if(userNm == ""){
+        alert("이름을 입력해 주세요")
+        return;
+      }
+      if(region == ""){
+        alert("지역을 입력해 주세요")
+        return;
+      }
+      if(field == ""){
+        alert("개발 분야를 입력해 주세요")
+        return;
+      }
+
+      /* insert */
+      
+        const res = await axios.post("/api/dbConnection", {
+          url: "register",
+          userId: userId,
+          userPw: userPw,
+          userNm : userNm,
+          region: region,
+          field: field
+        });
+      
+      alert(res.data)
+      router.push("/login/userDetailInfo")
+
+    }else{
+      alert("아이디 중복확인이 필요합니다.")
+    }
+  }
+
+
   return (
     <>
       <div className="min-w-screen min-h-screen bg-gray-900 flex items-center justify-center px-5 py-5">
@@ -235,9 +334,12 @@ export default function Signup() {
                         type="text"
                         className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                         placeholder="Enter Your Id"
+                        onChange={idOnChangeHandler}
                       />
                       <div className="w-2/3 ml-4">
-                        <button className="block w-full bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                        <button
+                        onClick={duple}
+                         className="block w-full bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
                           중복확인
                         </button>
                       </div>
@@ -262,6 +364,7 @@ export default function Signup() {
                         type="password"
                         className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                         placeholder="Enter Your Password"
+                        onChange={pwOnChangeHandler}
                       />
                     </div>
                   </div>
@@ -284,6 +387,7 @@ export default function Signup() {
                         type="text"
                         className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                         placeholder="Enter Your Name"
+                        onChange={nmOnChangeHandler}
                       />
                     </div>
                   </div>
@@ -298,12 +402,15 @@ export default function Signup() {
                       근무 또는 거주 지역
                     </label>
                     <div className="relative">
-                      <select className="w-full py-2 pl-3 pr-10 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500">
+                      <select 
+                      id="region"
+                      onChange={rgOnChangeHandler}
+                      className="w-full py-2 pl-3 pr-10 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500">
                         <option value="">지역 선택</option>
-                        <option value="">서울</option>
-                        <option value="">경기</option>
-                        <option value="">부산</option>
-                        <option value="">인천</option>
+                        <option value="서울">서울</option>
+                        <option value="경기">경기</option>
+                        <option value="부산">부산</option>
+                        <option value="인천">인천</option>
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                         <svg
@@ -335,14 +442,15 @@ export default function Signup() {
                     </label>
                     <div className="relative">
                       <select
-                        id="location"
+                        id="field"
+                        onChange={fdOnChangeHandler}
                         className="w-full py-2 pl-3 pr-10 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                       >
                         <option value="">분야 선택</option>
-                        <option value="">프론트엔드</option>
-                        <option value="">백엔드</option>
-                        <option value="">풀스택</option>
-                        <option value="">DBA</option>
+                        <option value="프론트엔드">프론트엔드</option>
+                        <option value="백엔드">백엔드</option>
+                        <option value="풀스택">풀스택</option>
+                        <option value="DBA">DBA</option>
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                         <svg
@@ -366,7 +474,9 @@ export default function Signup() {
 
                 <div className="flex -mx-3">
                   <div className="w-full px-3 mb-5">
-                    <button className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button 
+                    onClick={goRegister}
+                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
                       REGISTER NOW
                     </button>
                   </div>

@@ -1,4 +1,31 @@
+import { useRouter } from "next/router";
+import { useCallback, useState } from "react";
+
 export default function UserDetailInfo() {
+  const router = useRouter();
+  /* useState, handler */
+  const [nickName,setNickName] =useState("");
+  const [introduce, setIntroduce] = useState("");
+  const [gender, setGender] = useState("");
+
+  const [isDuple, setIsDuple] = useState(false);
+
+  const nnOnChangeHandler = useCallback((e)=>{
+    setNickName(e.target.value);
+  },[])
+  const itrOnChangeHandler = useCallback((e)=>{
+    setIntroduce(e.target.value);
+  },[])
+  const gdOnChangeHandler = useCallback((e)=>{
+    setGender(e.target.value);
+  },[])
+
+
+
+
+  /* 닉네임 중복확인 */
+
+
   return (
     <>
       <div className="min-w-screen min-h-screen bg-gray-900 flex items-center justify-center px-5 py-5">
@@ -314,7 +341,9 @@ export default function UserDetailInfo() {
                     </button>
                   </div>
                   <div className="w-1/2 px-3 mb-5">
-                    <button className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button 
+                    onClick={()=>{router.push("/login/signIn")}}
+                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
                       건너뛰기
                     </button>
                   </div>

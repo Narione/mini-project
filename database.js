@@ -6,7 +6,7 @@ const pool = createPool({
   user: "root",
   password: "oracle21c",
   database: "react-db",
-  port: 3309,
+  port: 3306,
 });
 
 // pool에서 연결 가져오기(성공, 에러처리)

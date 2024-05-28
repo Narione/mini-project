@@ -104,11 +104,18 @@ const Header = () => {
             </LinkScroll>
           </ul>
           <div
+            onClick={() => router.push("/login/signIn")}
+            className="col-start-10 col-end-12 font-medium flex justify-end items-center"
+          >
+            <ButtonOutline className="ml-4">Sign In</ButtonOutline>
+          </div>
+          <div
             onClick={() => router.push("/login/signUp")}
             className="col-start-10 col-end-12 font-medium flex justify-end items-center"
           >
             <ButtonOutline className="ml-4">Sign Up</ButtonOutline>
           </div>
+          
         </nav>
       </header>
 
