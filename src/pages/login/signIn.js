@@ -1,4 +1,55 @@
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+
 export default function SignIn() {
+  const router = useRouter();
+  /* userState, handler */
+  const [userId, setUserId] = useState("");
+  const [userPw, setUserPw] = useState("");
+
+  const idOnChangeHandler = useCallback((e)=>{
+    setUserId(e.target.value)
+  },[])
+  const pwOnChangeHandler = useCallback((e)=>{
+    setUserPw(e.target.value)
+  },[])
+
+  useEffect(()=>{
+    localStorage.setItem("login","false")
+  },[])
+
+  /* 로그인 하기 */
+
+  const goSignIn = async()=>{
+    if(!userId){
+      alert("아이디를 입력해주세요.")
+      return;
+    }
+    if(!userPw){
+      alert("패스워드를 입력해주세요.")
+      return;
+    }
+
+    const res = await axios.post("/api/dbConnection",{
+      url:"signIn",
+      userId:userId,
+    }
+  )
+  if(res.data.length == 0){
+    alert("존재하지 않는 아이디이거나 비밀번호가 일치하지 않습니다.")
+    return;
+  }else{
+    if(res.data[0].user_pw==userPw){
+      alert("로그인 성공")
+      localStorage.setItem("login","true");
+      router.push("/")
+    }else{
+      alert("존재하지 않는 아이디이거나 비밀번호가 일치하지 않습니다.")
+    }
+  }
+  }
+
   return (
     <>
       <div className="min-w-screen min-h-screen bg-gray-900 flex items-center justify-center px-5 py-5">
@@ -234,6 +285,7 @@ export default function SignIn() {
                         type="text"
                         className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                         placeholder="Enter Your Id"
+                        onChange={idOnChangeHandler}
                       />
                     </div>
                   </div>
@@ -256,18 +308,23 @@ export default function SignIn() {
                       className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-200 outline-none focus:border-indigo-500"
                       placeholder="Enter Your Password"
                       maxLength="20"
+                      onChange={pwOnChangeHandler}
                     />
                   </div>
                 </div>
 
                 <div className="flex -mx-3 mt-10">
                   <div className="w-1/2 px-3 mb-5">
-                    <button className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button 
+                    onClick={goSignIn}
+                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
                       로그인 하기
                     </button>
                   </div>
                   <div className="w-1/2 px-3 mb-5">
-                    <button className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button 
+                    onClick={()=>{router.push("/")}}
+                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
                       로그인 취소
                     </button>
                   </div>

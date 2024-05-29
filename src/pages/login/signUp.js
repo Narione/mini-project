@@ -90,7 +90,7 @@ export default function Signup() {
         });
       
       alert(res.data)
-      router.push("/login/userDetailInfo")
+      router.push(`/login/userDetailInfo?userId=${userId}`)
 
     }else{
       alert("아이디 중복확인이 필요합니다.")
