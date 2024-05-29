@@ -102,19 +102,25 @@ const Header = () => {
             >
               News
             </LinkScroll>
-          </ul>
+            <LinkScroll>
           <div
             onClick={() => router.push("/login/signIn")}
             className="col-start-10 col-end-12 font-medium flex justify-end items-center"
           >
             <ButtonOutline className="ml-4">Sign In</ButtonOutline>
           </div>
+          </LinkScroll>
+          <LinkScroll>
           <div
             onClick={() => router.push("/login/signUp")}
             className="col-start-10 col-end-12 font-medium flex justify-end items-center"
           >
             <ButtonOutline className="ml-4">Sign Up</ButtonOutline>
           </div>
+          </LinkScroll>
+
+          </ul>
+          
           
         </nav>
       </header>
