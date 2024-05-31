@@ -5,12 +5,20 @@ import ButtonOutline from "../misc/ButtonOutline.";
 import { useRouter } from "next/router";
 
 const Header = () => {
+  const [login, setLogin] = useState(false);
+
   const [activeLink, setActiveLink] = useState(null);
   const [scrollActive, setScrollActive] = useState(false);
   useEffect(() => {
     window.addEventListener("scroll", () => {
       setScrollActive(window.scrollY > 20);
     });
+    const loginYN = localStorage.getItem("login");
+    if (loginYN == "true") {
+      setLogin(true);
+    } else {
+      setLogin(false);
+    }
   }, []);
 
   const router = useRouter();
@@ -102,26 +110,40 @@ const Header = () => {
             >
               News
             </LinkScroll>
-            <LinkScroll>
-          <div
-            onClick={() => router.push("/login/signIn")}
-            className="col-start-10 col-end-12 font-medium flex justify-end items-center"
-          >
-            <ButtonOutline className="ml-4">Sign In</ButtonOutline>
-          </div>
-          </LinkScroll>
-          <LinkScroll>
-          <div
-            onClick={() => router.push("/login/signUp")}
-            className="col-start-10 col-end-12 font-medium flex justify-end items-center"
-          >
-            <ButtonOutline className="ml-4">Sign Up</ButtonOutline>
-          </div>
-          </LinkScroll>
 
+            {login ? (
+              <LinkScroll>
+                <div
+                  onClick={() => {
+                    localStorage.setItem("login", false);
+                    setLogin(false);
+                  }}
+                  className="col-start-10 col-end-12 font-medium flex justify-end items-center"
+                >
+                  <ButtonOutline className="ml-4">Logout</ButtonOutline>
+                </div>
+              </LinkScroll>
+            ) : (
+              <>
+                <LinkScroll>
+                  <div
+                    onClick={() => router.push("/login/signIn")}
+                    className="col-start-10 col-end-12 font-medium flex justify-end items-center"
+                  >
+                    <ButtonOutline className="ml-4">Sign In</ButtonOutline>
+                  </div>
+                </LinkScroll>
+                <LinkScroll>
+                  <div
+                    onClick={() => router.push("/login/signUp")}
+                    className="col-start-10 col-end-12 font-medium flex justify-end items-center"
+                  >
+                    <ButtonOutline className="ml-4">Sign Up</ButtonOutline>
+                  </div>
+                </LinkScroll>
+              </>
+            )}
           </ul>
-          
-          
         </nav>
       </header>
 

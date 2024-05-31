@@ -13,7 +13,7 @@ export default function Signup() {
   const [region, setRegion] = useState("");
   const [field, setField] = useState("");
 
-  const [isDuple, setIsDuple] = useState(false);
+  const [isDuple, setIsDuple] = useState(true);
 
   const idOnChangeHandler = useCallback((e)=>{
     setUserId(e.target.value);
@@ -34,29 +34,29 @@ export default function Signup() {
   
   /* 아이디 중복 확인 */
   useEffect(()=>{
-    setIsDuple(false);
+    setIsDuple(true);
   },[userId])
 
   const duple = async () => {
     const res = await axios.post("/api/dbConnection", {
       url: "duple",
+      userId: userId
     });
-    const idArray = res.data
-    // console.log(res.data);
-    for (const item of idArray){
-      if(item.user_id == userId){
+    const rst = res.data
+    console.log(rst);
+      if(rst){
         alert("중복하는 아이디가 존재합니다.")
-        setIsDuple(false);
-        return;
-      }
+        setIsDuple(true);
+    }else{
+      alert("사용할 수 있는 아이디입니다.")
+      setIsDuple(false);
     }
-    alert("사용할 수 있는 아이디입니다.")
-    setIsDuple(true);
+    
   };
 
   /* 제출하기 */
   const goRegister = async() => {
-    if(isDuple){
+    if(!isDuple){
       if(userId == ""){
         alert("id를 입력해 주세요")
         return;

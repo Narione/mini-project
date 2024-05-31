@@ -4,96 +4,76 @@ import { useCallback, useEffect, useState } from "react";
 
 export default function UserDetailInfo() {
   const router = useRouter();
-  const {userId} = router.query;
+  const { userId } = router.query;
   /* useState, handler */
-  const [nickName,setNickName] =useState("");
+  const [nickName, setNickName] = useState("");
   const [introduce, setIntroduce] = useState("");
   const [gender, setGender] = useState("");
 
-  const [isDuple, setIsDuple] = useState(false);
+  const [isDuple, setIsDuple] = useState(true);
 
-  const nnOnChangeHandler = useCallback((e)=>{
+  const nnOnChangeHandler = useCallback((e) => {
     setNickName(e.target.value);
-  },[])
-  const itrOnChangeHandler = useCallback((e)=>{
+  }, []);
+  const itrOnChangeHandler = useCallback((e) => {
     setIntroduce(e.target.value);
-  },[])
-  const gdOnChangeHandler = useCallback((e)=>{
+  }, []);
+  const gdOnChangeHandler = useCallback((e) => {
     setGender(e.target.value);
-  },[])
-
-
-
+  }, []);
 
   /* 닉네임 중복확인 */
-  useEffect(()=>{
-    setIsDuple(false);
-  },[nickName])
+  useEffect(() => {
+    setIsDuple(true);
+  }, [nickName]);
 
   const duple = async () => {
-    if(nickName != ""){
-    const res = await axios.post("/api/dbConnection", {
-      url: "nnDuple",
-    });
-    const nnArray = res.data
-    // console.log(res.data);
-    for (const item of nnArray){
-      if(item.user_nickname == nickName){
-        alert("중복하는 닉네임이 존재합니다.")
+    if (nickName != "") {
+      const res = await axios.post("/api/dbConnection", {
+        url: "nnDuple",
+        nickName: nickName,
+      });
+      const rst = res.data;
+      // console.log(res.data);
+      console.log(rst);
+      if (rst) {
+        alert("중복하는 닉네임이 존재합니다.");
+        setIsDuple(true);
+      } else {
+        alert("사용할 수 있는 닉네임입니다.");
         setIsDuple(false);
-        return;
       }
+    } else {
+      alert("닉네임을 입력해주세요.");
     }
-    alert("사용할 수 있는 닉네임입니다.")
-    setIsDuple(true);
-  }else{
-    alert("닉네임을 입력해주세요.")
-  }
   };
 
-  /* null값 넣어주기 */
-  useEffect(()=>{
-    if(nickName == ""){
-      setNickName(null);
-    }
-    if(introduce==""){
-      setIntroduce(null);
-    }
-    if(gender==""){
-      setGender(null);
-    }
-  },[nickName,introduce,gender])
-
-
   /* 내용추가하기 */
-  const addInfo = async () =>{
-    console.log("n:",nickName)
-    console.log("i:",introduce)
-    console.log("g:",gender)
+  const addInfo = async () => {
+    console.log("n:", nickName);
+    console.log("i:", introduce);
+    console.log("g:", gender);
 
-    
-    if(introduce){
-      if(introduce.length >20){
-        alert("소개글은 20자 이내로 작성해주세요.")
+    if (introduce) {
+      if (introduce.length > 20) {
+        alert("소개글은 20자 이내로 작성해주세요.");
         return;
       }
     }
-    if(nickName==null||isDuple){
+    if (nickName == null || !isDuple) {
       const res = await axios.post("/api/dbConnection", {
         url: "addInfo",
-        userId: userId,
-        nickName: nickName,
-        introduce: introduce,
-        gender : gender
+        userId: userId == "" ? null : userId,
+        nickName: nickName == "" ? null : nickName,
+        introduce: introduce == "" ? null : introduce,
+        gender: gender == "" ? null : gender,
       });
-      alert(res.data)
-      router.push("/login/signIn")
-      
-    } else{
-      alert("닉네임 중복확인이 필요합니다.")
+      alert(res.data);
+      router.push("/login/signIn");
+    } else {
+      alert("닉네임 중복확인이 필요합니다.");
     }
-  }
-
+  };
 
   return (
     <>
@@ -333,9 +313,10 @@ export default function UserDetailInfo() {
                         onChange={nnOnChangeHandler}
                       />
                       <div className="w-2/3 ml-4">
-                        <button 
-                        onClick={duple}
-                        className="block w-full bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                        <button
+                          onClick={duple}
+                          className="block w-full bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
+                        >
                           중복확인
                         </button>
                       </div>
@@ -413,16 +394,20 @@ export default function UserDetailInfo() {
 
                 <div className="flex -mx-3 mt-10">
                   <div className="w-1/2 px-3 mb-5">
-                    <button 
-                    onClick={addInfo}
-                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button
+                      onClick={addInfo}
+                      className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
+                    >
                       사용자 정보 추가
                     </button>
                   </div>
                   <div className="w-1/2 px-3 mb-5">
-                    <button 
-                    onClick={()=>{router.push("/login/signIn")}}
-                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button
+                      onClick={() => {
+                        router.push("/login/signIn");
+                      }}
+                      className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
+                    >
                       건너뛰기
                     </button>
                   </div>

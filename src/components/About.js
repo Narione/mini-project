@@ -4,6 +4,7 @@ import ButtonPrimary from "./misc/ButtonPrimary";
 import { motion } from "framer-motion";
 import getScrollAnimation from "../utils/getScrollAnimation";
 import ScrollAnimationWrapper from "./Layout/ScrollAnimationWrapper";
+import { useRouter } from "next/router";
 
 const About = ({
   listUser = [
@@ -25,6 +26,7 @@ const About = ({
   ],
 }) => {
   const scrollAnimation = useMemo(() => getScrollAnimation(), []);
+  const router = useRouter();
 
   return (
     <div className="max-w-screen-xl mt-24 px-8 xl:px-16 mx-auto" id="about">
@@ -41,7 +43,13 @@ const About = ({
               우리는 다양한 개발자들이 모여 지식을 공유하고 협업할 수 있는 열린
               공간을 만들었습니다. 함께 성장하고 발전하는 여정에 동참해 보세요!
             </p>
-            <ButtonPrimary>Get Started</ButtonPrimary>
+            <span
+              onClick={() => {
+                router.push("/userlist");
+              }}
+            >
+              <ButtonPrimary>Get Started</ButtonPrimary>
+            </span>
           </div>
           <div className="flex w-full">
             <motion.div className="h-full w-full" variants={scrollAnimation}>

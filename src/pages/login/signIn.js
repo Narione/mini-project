@@ -8,47 +8,44 @@ export default function SignIn() {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
 
-  const idOnChangeHandler = useCallback((e)=>{
-    setUserId(e.target.value)
-  },[])
-  const pwOnChangeHandler = useCallback((e)=>{
-    setUserPw(e.target.value)
-  },[])
+  const idOnChangeHandler = useCallback((e) => {
+    setUserId(e.target.value);
+  }, []);
+  const pwOnChangeHandler = useCallback((e) => {
+    setUserPw(e.target.value);
+  }, []);
 
-  useEffect(()=>{
-    localStorage.setItem("login","false")
-  },[])
+  useEffect(() => {
+    localStorage.setItem("login", false);
+  }, []);
 
   /* 로그인 하기 */
 
-  const goSignIn = async()=>{
-    if(!userId){
-      alert("아이디를 입력해주세요.")
+  const goSignIn = async () => {
+    if (!userId) {
+      alert("아이디를 입력해주세요.");
       return;
     }
-    if(!userPw){
-      alert("패스워드를 입력해주세요.")
+    if (!userPw) {
+      alert("패스워드를 입력해주세요.");
       return;
     }
 
-    const res = await axios.post("/api/dbConnection",{
-      url:"signIn",
-      userId:userId,
+    const res = await axios.post("/api/dbConnection", {
+      url: "signIn",
+      userId: userId,
+      userPw: userPw,
+    });
+
+    if (res.data) {
+      alert("로그인 성공");
+      localStorage.setItem("login", true);
+      localStorage.setItem("loginID", userId);
+      router.push("/");
+    } else {
+      alert("존재하지 않는 아이디이거나 비밀번호가 일치하지 않습니다.");
     }
-  )
-  if(res.data.length == 0){
-    alert("존재하지 않는 아이디이거나 비밀번호가 일치하지 않습니다.")
-    return;
-  }else{
-    if(res.data[0].user_pw==userPw){
-      alert("로그인 성공")
-      localStorage.setItem("login","true");
-      router.push("/")
-    }else{
-      alert("존재하지 않는 아이디이거나 비밀번호가 일치하지 않습니다.")
-    }
-  }
-  }
+  };
 
   return (
     <>
@@ -315,16 +312,20 @@ export default function SignIn() {
 
                 <div className="flex -mx-3 mt-10">
                   <div className="w-1/2 px-3 mb-5">
-                    <button 
-                    onClick={goSignIn}
-                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button
+                      onClick={goSignIn}
+                      className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
+                    >
                       로그인 하기
                     </button>
                   </div>
                   <div className="w-1/2 px-3 mb-5">
-                    <button 
-                    onClick={()=>{router.push("/")}}
-                    className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold">
+                    <button
+                      onClick={() => {
+                        router.push("/");
+                      }}
+                      className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold"
+                    >
                       로그인 취소
                     </button>
                   </div>
